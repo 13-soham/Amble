@@ -15,6 +15,17 @@ app.get("/user", (req, res)=>{
     });
 });
 
+
+app.get("/test", (req, res)=>{
+    const { userID , username } = req.query;    // query parameters
+    console.log(userID + ", " +username);
+    res.send("this is from test");
+});
+
+app.get("/configue/:id/:name", (req, res)=>{
+    res.send(req.params);                           // dynamic routing
+});
+
 app.post("/user", (req, res)=>{
     // ... do database work
     res.send("DB added succesfully");
@@ -22,7 +33,7 @@ app.post("/user", (req, res)=>{
 
 app.patch("/user", (req, res)=>{
     res.send("user updated succesfully");
-})
+});
 
 
 app.listen(port, ()=>{
