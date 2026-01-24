@@ -3,22 +3,26 @@ const express = require("express");   // from C:/Users/soham/AppData/Local/Micro
 const app = express();
 const port = 8000;
 
-app.get("/", (req, res)=>{
-    res.send("hello from server");
+// app.use("/test", (req, res)=>{
+//     res.send("from test server");
+// });
+
+app.get("/user", (req, res)=>{
+    res.send({
+        name : "Bimal Mohanto",
+        age : 57,
+        email : "bilal@gmail.com"
+    });
 });
 
-app.use("/test", (req, res)=>{
-    res.send("from test server");
+app.post("/user", (req, res)=>{
+    // ... do database work
+    res.send("DB added succesfully");
 });
 
-app.get("/page/route", (req, res)=>{
-    res.send("from nested server");
-});
-
-app.use("/page", (req, res)=>{
-    res.send("from page server");
-});
-
+app.patch("/user", (req, res)=>{
+    res.send("user updated succesfully");
+})
 
 
 app.listen(port, ()=>{
