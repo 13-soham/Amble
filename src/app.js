@@ -1,41 +1,62 @@
-const express = require("express");   // from C:/Users/soham/AppData/Local/Microsoft/TypeScript/5.9/node_modules/@types/express/index
+const express = require("express");
 
 const app = express();
 const port = 8000;
 
-// app.use("/test", (req, res)=>{
-//     res.send("from test server");
+// app.get("/", (req, res)=>{
+//     res.send({
+//         name : "Tulsi",
+//         age : 13
+//     });
 // });
 
-app.get("/user", (req, res)=>{
-    res.send({
-        name : "Bimal Mohanto",
-        age : 57,
-        email : "bilal@gmail.com"
-    });
+// // req.query
+// app.get("/user", (req, res)=>{
+//     // route handlers
+//     const { Id, ismale } = req.query;
+//     res.send({
+//         Id,
+//         ismale
+//     });
+// });
+
+// // req.params → dynamic routing
+// app.get("/data/:Id/:ismale", (req, res)=>{
+//     const val = req.params;
+//     res.send(val);
+// });
+
+
+// // there can be multiple route handlers
+// app.use("/user", (req, res, next)=>{
+//     // res.send("from route01");    // res.send() ends the request response cycle, so use next()
+//     console.log("from route01");
+//     next();
+//     res.send("from route01");
+//     // When next() is called, Express passes control to the next route handler, but the current function continues executing. If the next handler sends a response, any later res.send() causes an error because headers are already sent
+// }, (req, res)=>{
+//     res.send("from route02");
+// });
+
+
+app.use("/", (req, res, next)=>{
+    // middleware
+    console.log("from route01");
+    next();
 });
 
-
-app.get("/test", (req, res)=>{
-    const { userID , username } = req.query;    // query parameters
-    console.log(userID + ", " +username);
-    res.send("this is from test");
+app.use("/user", (req, res, next)=>{
+    // middleware
+    console.log("from route02");
+    next();
 });
 
-app.get("/configue/:id/:name", (req, res)=>{
-    res.send(req.params);                           // dynamic routing
+app.use("/user", (req, res, next)=>{
+    // route handler
+    console.log("from route03");
+    res.send("requested accepted");
 });
-
-app.post("/user", (req, res)=>{
-    // ... do database work
-    res.send("DB added succesfully");
-});
-
-app.patch("/user", (req, res)=>{
-    res.send("user updated succesfully");
-});
-
 
 app.listen(port, ()=>{
-    console.log(`server listen at port ${port}`);
+    console.log(`app listen in port ${port}`);
 });
