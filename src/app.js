@@ -51,9 +51,11 @@ const port = 8000;
 
 // Handle a demo Auth Middleware for all HTTP request...
 const { userAuth } = require("./middlewares/auth");
+
 app.use("/user/:id", userAuth);
 
 app.get("/user/:id/getProfile", (req, res)=>{
+    throw new Error("lalalala");
     res.send({
         name : "Admin Roy",
         isMale : true
@@ -63,6 +65,14 @@ app.get("/user/:id/getProfile", (req, res)=>{
 app.get("/user/:id/deleteProfile", (req, res)=>{
     res.send("user deleted");
 });
+
+
+// new style of error handling
+app.use("/", (err, req, res, next)=>{
+    if(err){
+        res.status(500).send("something with wrong");
+    }
+})
 
 
 app.listen(port, ()=>{
