@@ -3,13 +3,6 @@ const express = require("express");
 const app = express();
 const port = 8000;
 
-// app.get("/", (req, res)=>{
-//     res.send({
-//         name : "Tulsi",
-//         age : 13
-//     });
-// });
-
 // // req.query
 // app.get("/user", (req, res)=>{
 //     // route handlers
@@ -38,24 +31,39 @@ const port = 8000;
 //     res.send("from route02");
 // });
 
+// app.use("/", (req, res, next)=>{
+//     // middleware
+//     console.log("it is a 1st middleware");
+//     next();
+// });
 
-app.use("/", (req, res, next)=>{
-    // middleware
-    console.log("from route01");
-    next();
+// app.use("/user", (req, res, next)=>{
+//     // middleware
+//     console.log("it is 2nd middleware");
+//     next();
+// }, (req, res, next)=>{
+//     // route handler
+//     console.log("it is the route handler");
+//     res.send("respond sends back");
+// });
+
+
+
+// Handle a demo Auth Middleware for all HTTP request...
+const { userAuth } = require("./middlewares/auth");
+app.use("/user/:id", userAuth);
+
+app.get("/user/:id/getProfile", (req, res)=>{
+    res.send({
+        name : "Admin Roy",
+        isMale : true
+    });
 });
 
-app.use("/user", (req, res, next)=>{
-    // middleware
-    console.log("from route02");
-    next();
+app.get("/user/:id/deleteProfile", (req, res)=>{
+    res.send("user deleted");
 });
 
-app.use("/user", (req, res, next)=>{
-    // route handler
-    console.log("from route03");
-    res.send("requested accepted");
-});
 
 app.listen(port, ()=>{
     console.log(`app listen in port ${port}`);
