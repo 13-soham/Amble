@@ -1,80 +1,81 @@
-const express = require("express");
+// Amble: Implies a relaxed, casual way of meeting people.
+// Amble — slow connections, real people
 
+const express = require("express");
+const { userAuth } = require("./middlewares/auth");
+const { connectDB } = require("./config/database");
+const { User } = require("./model/user");
 const app = express();
 const port = 8000;
 
-// // req.query
-// app.get("/user", (req, res)=>{
-//     // route handlers
-//     const { Id, ismale } = req.query;
+// Handle a demo Auth Middleware for all HTTP request...
+// app.use("/user/:id", userAuth);
+
+// app.get("/user/:id/getProfile", (req, res)=>{
+//     // throw new Error("lalalala");
 //     res.send({
-//         Id,
-//         ismale
+//         name : "Admin Roy",
+//         isMale : true
 //     });
 // });
 
-// // req.params → dynamic routing
-// app.get("/data/:Id/:ismale", (req, res)=>{
-//     const val = req.params;
-//     res.send(val);
+// app.get("/user/:id/deleteProfile", (req, res)=>{
+//     res.send("user deleted");
 // });
 
 
-// // there can be multiple route handlers
-// app.use("/user", (req, res, next)=>{
-//     // res.send("from route01");    // res.send() ends the request response cycle, so use next()
-//     console.log("from route01");
-//     next();
-//     res.send("from route01");
-//     // When next() is called, Express passes control to the next route handler, but the current function continues executing. If the next handler sends a response, any later res.send() causes an error because headers are already sent
-// }, (req, res)=>{
-//     res.send("from route02");
+// create a /signup API
+// method : 01
+// app.post("/signup", async (req, res)=>{
+//     let newUser = new User({
+//         firstName : "Anmol",
+//         lastName : "Singha",
+//         email : "anmol123@gmail.com",
+//         password : "hoster1010",
+//         age : 43,
+//         gender : "male"
+//     });
+
+//     try {
+//         await newUser.save();
+//         res.status(201).json({
+//             message : "user created",
+//             user : newUser
+//         });
+//     } catch (err) {
+//         res.status(400).json({
+//             message : err
+//         });
+//     }
 // });
 
-// app.use("/", (req, res, next)=>{
-//     // middleware
-//     console.log("it is a 1st middleware");
-//     next();
-// });
-
-// app.use("/user", (req, res, next)=>{
-//     // middleware
-//     console.log("it is 2nd middleware");
-//     next();
-// }, (req, res, next)=>{
-//     // route handler
-//     console.log("it is the route handler");
-//     res.send("respond sends back");
-// });
-
-
-
-// Handle a demo Auth Middleware for all HTTP request...
-const { userAuth } = require("./middlewares/auth");
-
-app.use("/user/:id", userAuth);
-
-app.get("/user/:id/getProfile", (req, res)=>{
-    throw new Error("lalalala");
-    res.send({
-        name : "Admin Roy",
-        isMale : true
-    });
-});
-
-app.get("/user/:id/deleteProfile", (req, res)=>{
-    res.send("user deleted");
-});
-
-
-// new style of error handling
-app.use("/", (err, req, res, next)=>{
-    if(err){
-        res.status(500).send("something with wrong");
+// method : 02
+app.post("/signup", async (req, res) => {
+    try {
+        const newUser = await User.create({
+            firstName: "Prabhas",
+            lastName: "Shubhramayam",
+            email: "bahubali12345@gmail.com",
+            password: "adipurushXbahubali108",
+            age: 49,
+            gender: "male"
+        })
+        res.status(201).json({
+            message: "user created succesfully",
+            user: newUser
+        });
+    } catch (err) {
+        res.status(401).send(err.message);
     }
-})
-
-
-app.listen(port, ()=>{
-    console.log(`app listen in port ${port}`);
 });
+
+connectDB()
+    .then(() => {
+        console.log("database Connection Established.");
+        app.listen(port, () => {
+            console.log(`app listen in port ${port}`);
+        });
+    })
+    .catch((err) => {
+        console.error(err.message);
+    });
