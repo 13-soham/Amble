@@ -1,7 +1,8 @@
-const userAuth = (req, res, next) => {
-    let token = Number(req.params.id);
-    let AuthorizedToken = 9432
-    token === AuthorizedToken ? next() : res.status(401).send("Unauthorized id detected");
+const handleAuth = (req, res, next)=>{
+    let token = req.params.userId;
+    let validToken = 9432;
+
+    validToken === Number(token) ? next() : res.status(500).send("authentication error");
 }
 
-module.exports = { userAuth };
+module.exports = { handleAuth };
