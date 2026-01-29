@@ -28,35 +28,83 @@ app.post("/signup", async (req, res) => {
     }
 });
 
+
+
 // Feed APT : GET / Feed → get all the users from the database
-app.get("/feed", async (req, res)=>{
+app.get("/feed", async (req, res) => {
     try {
         const allUser = await User.find({});
-        if(allUser.length > 0) res.send(allUser);
+        if (allUser.length > 0) res.send(allUser);
         else res.status(404).send("user not found");
     } catch (err) {
         res.status(404).json({
-            message : err.message
+            message: err.message
         })
     }
 });
+
 
 
 // get name having age > 30
-app.get("/filter", async (req, res)=>{
+app.get("/filter", async (req, res) => {
     try {
         const filterUser = await User.find(
-            {age : {$gt : 30}},
-            {firstName : 1, lastName : 1, age : 1, email : 1, _id : 0}
+            { age: { $gt: 30 } },
+            { firstName: 1, lastName: 1, age: 1, email: 1, _id: 0 }
         );
-        if(filterUser.length > 0) res.send(filterUser);
+        if (filterUser.length > 0) res.send(filterUser);
         else res.status(404).send("user not found");
+    } catch (err) {
+        res.status(404).json({
+            message: err.message
+        })
+    }
+});
+
+
+
+// delete user by userId
+app.delete("/user", async (req, res) => {
+    let userId = req.body.userId;
+
+    try {
+        const deleteUser = await User.findByIdAndDelete({userId : userId});
+        if (!deleteUser) {
+            return res.status(404).json({ message: "user not found" });
+        }
+        res.status(200).send("user deleted successfully");
+
+    } catch (err) {
+        res.status(404).json({
+            message: err.message
+        })
+    }
+});
+
+
+
+// update user from database
+app.patch("/user", async (req, res)=>{
+    let oldEmail = req.body.email;
+    try {
+        await User.findOneAndUpdate(
+            {email : oldEmail}, 
+            req.body,
+            {
+                new : true,
+                runValidators : true
+            }
+        ); 
+        res.status(200).json({
+            message : "user update succesfully"
+        })
     } catch (err) {
         res.status(404).json({
             message : err.message
         })
     }
 });
+
 
 connectDB()
     .then(() => {
