@@ -68,7 +68,7 @@ app.delete("/user", async (req, res) => {
     let userId = req.body.userId;
 
     try {
-        const deleteUser = await User.findByIdAndDelete({userId : userId});
+        const deleteUser = await User.findByIdAndDelete({ userId: userId });
         if (!deleteUser) {
             return res.status(404).json({ message: "user not found" });
         }
@@ -83,24 +83,59 @@ app.delete("/user", async (req, res) => {
 
 
 
-// update user from database
-app.patch("/user", async (req, res)=>{
-    let oldEmail = req.body.email;
+// update user from database via Email
+// app.patch("/user", async (req, res)=>{
+//     let oldEmail = req.body.email;
+//     try {
+//         await User.findOneAndUpdate(
+//             {email : oldEmail}, 
+//             req.body,
+//             {
+//                 new : true,
+//                 runValidators : true
+//             }
+//         ); 
+//         res.status(200).json({
+//             message : "user update succesfully"
+//         })
+//     } catch (err) {
+//         res.status(404).json({
+//             message : err.message
+//         })
+//     }
+// });
+
+
+// update user by userId
+app.patch("/user/:userId", async (req, res) => {
+    const userId = req.params.userId;
     try {
-        await User.findOneAndUpdate(
-            {email : oldEmail}, 
+
+        let allowUpdates = ["gender", "interest", "about", "photoUrl"];
+        const isUpdateAllow = Object.keys(req.body).every((key) => allowUpdates.includes(key));   // .every() returns true and false
+        if (!isUpdateAllow) {
+            throw new Error("Invaild filed selected");
+        }
+        if (req.body?.interest.length > 7) {
+            throw new Error("interest cannot have more than 7");
+        }
+
+        const updateUser = await User.findByIdAndUpdate(
+            { _id: userId },
             req.body,
             {
-                new : true,
-                runValidators : true
+                new: true,
+                runValidators: true
             }
-        ); 
+        );
+
         res.status(200).json({
-            message : "user update succesfully"
-        })
+            message: "user updated succesfully",
+            updateUser: updateUser
+        });
     } catch (err) {
         res.status(404).json({
-            message : err.message
+            msg: err.message
         })
     }
 });
