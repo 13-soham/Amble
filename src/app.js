@@ -27,7 +27,7 @@ app.post("/signup", async (req, res) => {
         // creating the new instance of user Model
         const newUser = await User.create({
             firstName, lastName, age, email, gender, interest, about, photoUrl,
-            password : hashPassword
+            password: hashPassword
         });
 
         res.status(201).json({
@@ -37,10 +37,35 @@ app.post("/signup", async (req, res) => {
     } catch (err) {
         res.status(400).json({
             message: err.message
-        });
+        })
     }
 });
 
+
+app.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        // check that email is in the database or not
+        const user = await User.findOne({email : email});
+        if(!user){
+            throw new Error("Invalid Email or Password");
+        }
+
+        // compare password
+        const validPassword = await bcrypt.compare(password, user.password);
+        if(!validPassword) throw new Error("Invalid Email or Password");
+        else{
+            res.json({ message : "user logged succesfully."});
+        }
+        
+        
+    } catch (err) {
+        res.status(400).json({
+            message: err.message
+        })
+    }
+});
 
 
 // Feed APT : GET / Feed → get all the users from the database
