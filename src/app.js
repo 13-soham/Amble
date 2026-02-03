@@ -7,6 +7,8 @@ const express = require("express");
 const { handleAuth } = require("./middlewares/auth");
 const { connectDB } = require("./config/database");
 const { User } = require("./model/user");
+const { validateSignup } = require("./helper/validation");
+const bcrypt = require("bcrypt");
 const app = express();
 const port = 8000;
 
@@ -14,8 +16,19 @@ const port = 8000;
 app.use(express.json());    // middleware to parse the json data to js object
 
 app.post("/signup", async (req, res) => {
+    const { firstName, lastName, age, email, password, gender, interest, about, photoUrl } = req.body;
     try {
-        const newUser = await User.create(req.body);
+        // validation of data
+        validateSignup(req);
+
+        // encrypt the password
+        const hashPassword = await bcrypt.hash(password, 10);
+
+        // creating the new instance of user Model
+        const newUser = await User.create({
+            firstName, lastName, age, email, gender, interest, about, photoUrl,
+            password : hashPassword
+        });
 
         res.status(201).json({
             message: "user is created",
@@ -68,7 +81,7 @@ app.delete("/user", async (req, res) => {
     let userId = req.body.userId;
 
     try {
-        const deleteUser = await User.findByIdAndDelete({ userId: userId });
+        const deleteUser = await User.findByIdAndDelete({ _id: userId });
         if (!deleteUser) {
             return res.status(404).json({ message: "user not found" });
         }
