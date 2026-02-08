@@ -10,6 +10,7 @@ const { User } = require("./model/user");
 const { validateSignup } = require("./helper/validation");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
+const JWT = require("jsonwebtoken");
 const app = express();
 const port = 8000;
 
@@ -62,8 +63,9 @@ app.post("/login", async (req, res) => {
         if (validPassword) {
 
             // create a JWT Token
+            const token = await JWT.sign({ id : user._id }, "Secrect@123");
             // add this token to the cookie and send response back to the server
-            res.cookie("token", "kjhasjdiufhnrwkrn");
+            res.cookie("token", token);
 
             res.json({ message: "Login Successful" });
         }
@@ -80,9 +82,12 @@ app.post("/login", async (req, res) => {
 
 
 // get profile
-app.get("/getProfile", (req, res) => {
+app.get("/getProfile", handleAuth, async (req, res) => {
     try {
-        const cookies = req.cookies;
+        const user = req.user;
+        res.json({
+            message : user
+        });
 
     } catch (err) {
         res.status(404).json({
