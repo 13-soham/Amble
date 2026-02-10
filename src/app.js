@@ -63,9 +63,12 @@ app.post("/login", async (req, res) => {
         if (validPassword) {
 
             // create a JWT Token
-            const token = await JWT.sign({ id : user._id }, "Secrect@123");
+            const token = await user.getJWT();
+            
             // add this token to the cookie and send response back to the server
-            res.cookie("token", token);
+            res.cookie("token", token, {
+                expires : new Date(Date.now() + 5 * 3600000)  // 5 hr.
+            });
 
             res.json({ message: "Login Successful" });
         }
