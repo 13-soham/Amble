@@ -7,82 +7,19 @@ const express = require("express");
 const { handleAuth } = require("./middlewares/auth");
 const { connectDB } = require("./config/database");
 const { User } = require("./model/user");
-const { validateSignup } = require("./helper/validation");
-const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
-const JWT = require("jsonwebtoken");
+const authRouter = require("./router/auth");
 const app = express();
 const port = 8000;
 
 // app.use("/:userId", handleAuth);
 app.use(express.json());    // middleware to parse the json data to js object
 app.use(cookieParser());   // parse the JWT
+
+
+// importing routing
+app.use("/", authRouter);
  
-
-// signup user
-app.post("/signup", async (req, res) => {
-    const { firstName, lastName, age, email, password, gender, interest, about, photoUrl } = req.body;
-    try {
-        // validation of data
-        validateSignup(req);
-
-        // encrypt the password
-        const hashPassword = await bcrypt.hash(password, 10);
-
-        // creating the new instance of user Model
-        const newUser = await User.create({
-            firstName, lastName, age, email, gender, interest, about, photoUrl,
-            password: hashPassword
-        });
-
-        res.status(201).json({
-            message: "user is created",
-            user: newUser
-        });
-    } catch (err) {
-        res.status(400).json({
-            message: err.message
-        })
-    }
-});
-
-
-// login user
-app.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-
-    try {
-        // check that email is in the database or not
-        const user = await User.findOne({ email: email });
-        if (!user) {
-            throw new Error("Invalid Email or Password");
-        }
-
-        // compare password
-        const validPassword = await bcrypt.compare(password, user.password);
-        if (validPassword) {
-
-            // create a JWT Token
-            const token = await user.getJWT();
-            
-            // add this token to the cookie and send response back to the server
-            res.cookie("token", token, {
-                expires : new Date(Date.now() + 5 * 3600000)  // 5 hr.
-            });
-
-            res.json({ message: "Login Successful" });
-        }
-        else {
-            throw new Error("Invalid Email or Password");
-        }
-
-    } catch (err) {
-        res.status(400).json({
-            message: err.message
-        })
-    }
-});
-
 
 // get profile
 app.get("/getProfile", handleAuth, async (req, res) => {
@@ -182,6 +119,7 @@ connectDB()
 
 
 // update user from database via Email
+
 // app.patch("/user", async (req, res)=>{
 //     let oldEmail = req.body.email;
 //     try {
@@ -215,3 +153,69 @@ connectDB()
 //         })
 //     }
 // });
+
+// // signup user
+// app.post("/signup", async (req, res) => {
+//     const { firstName, lastName, age, email, password, gender, interest, about, photoUrl } = req.body;
+//     try {
+//         // validation of data
+//         validateSignup(req);
+
+//         // encrypt the password
+//         const hashPassword = await bcrypt.hash(password, 10);
+
+//         // creating the new instance of user Model
+//         const newUser = await User.create({
+//             firstName, lastName, age, email, gender, interest, about, photoUrl,
+//             password: hashPassword
+//         });
+
+//         res.status(201).json({
+//             message: "user is created",
+//             user: newUser
+//         });
+//     } catch (err) {
+//         res.status(400).json({
+//             message: err.message
+//         })
+//     }
+// });
+
+
+// // login user
+// app.post("/login", async (req, res) => {
+//     const { email, password } = req.body;
+
+//     try {
+//         // check that email is in the database or not
+//         const user = await User.findOne({ email: email });
+//         if (!user) {
+//             throw new Error("Invalid Email or Password");
+//         }
+
+//         // compare password
+//         const validPassword = await bcrypt.compare(password, user.password);
+//         if (validPassword) {
+
+//             // create a JWT Token
+//             const token = await user.getJWT();
+            
+//             // add this token to the cookie and send response back to the server
+//             res.cookie("token", token, {
+//                 expires : new Date(Date.now() + 5 * 3600000)  // 5 hr.
+//             });
+
+//             res.json({ message: "Login Successful" });
+//         }
+//         else {
+//             throw new Error("Invalid Email or Password");
+//         }
+
+//     } catch (err) {
+//         res.status(400).json({
+//             message: err.message
+//         })
+//     }
+// });
+
+
