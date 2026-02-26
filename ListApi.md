@@ -8,7 +8,8 @@
 ## profileRouter
  - GET /profile/view
  - PATCH /profile/edit
- - PATCH /profile/password
+ - PATCH /profile/password   → like forgot password
+ - DELETE /profile/delete
 
  ### → Status : ignored, interested, accepted, rejected
 

@@ -34,6 +34,7 @@ authRouter.post("/signup", async (req, res) => {
 });
 
 
+
 // login user
 authRouter.post("/login", async (req, res) => {
     const { email, password } = req.body;
@@ -69,5 +70,12 @@ authRouter.post("/login", async (req, res) => {
         })
     }
 });
+
+
+authRouter.post("/logout", async(req, res)=>{
+    res.clearCookie("token");
+    res.send("logout succesfully");
+});
+
 
 module.exports = authRouter;

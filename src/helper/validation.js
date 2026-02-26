@@ -9,4 +9,13 @@ const validateSignup = (req) => {
 
 }
 
-module.exports = { validateSignup };
+const validateUpdate = (req)=>{
+    const allowUpdates = ["age", "gender", "interest", "about", "photoUrl"];
+    const isUpdateAllow = Object.keys(req.body).every((key) => allowUpdates.includes(key));     // .every() returns true and false
+    
+    if(req.body?.interest.length > 7) throw new Error("interest cannot have more than 7");
+    if(!isUpdateAllow) throw new Error("this field cannot be update");
+    else return false;
+}
+
+module.exports = { validateSignup, validateUpdate };
