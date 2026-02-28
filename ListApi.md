@@ -14,8 +14,7 @@
  ### → Status : ignored, interested, accepted, rejected
 
 ## requestRouter
- - POST /request/send/interested/:userId
- - POST /request/send/ignored/:userId
+ - POST /request/send/:status/:userId        " status → interested or ignored"
  - POST /request/review/accepted/:requestId
  - POST /request/review/rejected/:requestId
 

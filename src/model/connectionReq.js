@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const connectionReqSchema = mongoose.Schema({
     senderId : {
-        type : mongoose.Schema.Types.ObjectId,
+        type : mongoose.Schema.Types.ObjectId,          // fromUserId
         required : true
     },
     receiverId : {
-        type : mongoose.Schema.Types.ObjectId,
+        type : mongoose.Schema.Types.ObjectId,           // toUserId
         required : true
     },
     status : {
@@ -20,5 +20,22 @@ const connectionReqSchema = mongoose.Schema({
     },
 },{ timestamps : true });
 
-const ConnectionReqModel = mongoose.model("ConnectionReq", connectionReqSchema);
-module.exports = { ConnectionReqModel };
+
+// indexing
+connectionReqSchema.index(
+    { senderId : 1, receiverId : 1 },
+    { unique : true }
+);
+
+
+// .pre() middleware use for runs first before anything happens in mongoose, use normal function
+connectionReqSchema.pre("save", function(next){
+    if(this.senderId.toString() === this.receiverId.toString()){
+        return next(new Error("Invalid request"));
+    }
+
+    next();
+});
+
+const ConnectionReq = mongoose.model("ConnectionReq", connectionReqSchema);
+module.exports = { ConnectionReq };

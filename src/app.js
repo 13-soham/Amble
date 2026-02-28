@@ -2,7 +2,6 @@
 // Amble — slow connections, real people
 
 
-// Handle a demo auth for all http request and create a signup route for POST request for valid user
 const express = require("express");
 // const { handleAuth } = require("./middlewares/auth");
 const { connectDB } = require("./config/database");
@@ -13,6 +12,8 @@ const port = 8000;
 
 const authRouter = require("./router/auth");
 const profileRouter = require("./router/profile");
+const requestRouter = require("./router/request");
+
 
 // app.use("/:userId", handleAuth);
 app.use(express.json());    // middleware to parse the json data to js object
@@ -22,6 +23,7 @@ app.use(cookieParser());   // parse the JWT
 // importing routing
 app.use("/", authRouter);
 app.use("/", profileRouter);
+app.use("/", requestRouter);
 
 
 connectDB()
