@@ -29,12 +29,10 @@ connectionReqSchema.index(
 
 
 // .pre() middleware use for runs first before anything happens in mongoose, use normal function
-connectionReqSchema.pre("save", function(next){
+connectionReqSchema.pre("save", function(){
     if(this.senderId.toString() === this.receiverId.toString()){
-        return next(new Error("Invalid request"));
+        throw new Error("Invalid request");
     }
-
-    next();
 });
 
 const ConnectionReq = mongoose.model("ConnectionReq", connectionReqSchema);

@@ -21,9 +21,9 @@ profileRouter.get("/profile/view", handleAuth, async (req, res) => {
 });
 
 
-// update user by userId
+// edit user
 profileRouter.patch("/profile/edit", handleAuth, async (req, res) => {
-    // validate updattion fields
+    // validate updation fields
     // if valid then update objects keys, after getting user from req.user
     try {
 
