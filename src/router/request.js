@@ -45,7 +45,7 @@ requestRouter.post("/request/send/:status/:userId", handleAuth, async (req, res)
 
         // const savedData = await connectionReq.save();   create already make save
 
-        res.status(200).json({
+        res.status(201).json({
             message: "request send succesfully",
             savedData
         });
@@ -103,7 +103,7 @@ requestRouter.post("/request/review/:status/:userId", handleAuth, async(req, res
             _id : requestingUser
         });
         
-        res.status(200).json({
+        res.status(201).json({
             message : `requested is ${status} between ${userA.firstName} and ${req.user.firstName} done.`,
             savedUser
         });

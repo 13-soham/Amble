@@ -18,6 +18,6 @@
  - POST /request/review/:status/:requestId   " status → accepted or rejected"
 
 ## userRouter
- - GET /user/connections
  - GET /user/request/received
+ - GET /user/connections
  - GET /user/feed  - feed API just show the all the users in the main page

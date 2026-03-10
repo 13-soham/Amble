@@ -13,6 +13,7 @@ const port = 8000;
 const authRouter = require("./router/auth");
 const profileRouter = require("./router/profile");
 const requestRouter = require("./router/request");
+const userRouter = require("./router/user");
 
 
 // app.use("/:userId", handleAuth);
@@ -24,6 +25,7 @@ app.use(cookieParser());   // parse the JWT
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
+app.use("/", userRouter);
 
 
 connectDB()
