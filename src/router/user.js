@@ -3,6 +3,9 @@ const userRouter = express.Router();
 
 const { handleAuth } = require("../middlewares/auth");
 const { ConnectionReq } = require("../model/connectionReq");
+const { User } = require("../model/user");
+
+const userFields = ["firstName", "lastName", "age", "gender", "about", "photoUrl", "interest", "isActive"];
 
 
 // get all the pending request
@@ -16,7 +19,7 @@ userRouter.get("/user/request/received", handleAuth, async (req, res)=>{
         const pendingReq = await ConnectionReq.find({
             receiverId : loggedUser,
             status : "interested"
-        }).populate("senderId", ["firstName", "lastName", "age", "gender", "about", "photoUrl", "interest", "isActive"]);
+        }).populate("senderId", userFields);
 
         if(pendingReq.length === 0){
             return res.status(200).json({
@@ -58,8 +61,8 @@ userRouter.get("/user/connections", handleAuth, async (req, res)=>{
                 }
             ]
         })
-        .populate("receiverId", ["firstName", "lastName", "age", "gender", "about", "photoUrl", "interest", "isActive"])
-        .populate("senderId", ["firstName", "lastName", "age", "gender", "about", "photoUrl", "interest", "isActive"]);
+        .populate("receiverId",userFields)
+        .populate("senderId", userFields);
 
         // if senderId is matched the loggedUserId then return receiverId, else retuen senderId
         const finalConnections = showConnections.map((val) => {
@@ -80,6 +83,47 @@ userRouter.get("/user/connections", handleAuth, async (req, res)=>{
         
     } catch (err) {
         res.status(404).json({
+            msg : err.message
+        });
+    }
+});
+
+
+
+// feed API
+userRouter.get("/user/feed", handleAuth, async(req, res)=>{
+    try {
+        const loggedUser = req.user._id;
+        const allUser = await ConnectionReq.find({
+            $or : [
+                {
+                    senderId : loggedUser
+                },{
+                    receiverId : loggedUser
+                }
+            ]
+        }).select("senderId receiverId");
+
+        let hideUsers = new Set();
+        allUser.forEach((e)=>{
+            hideUsers.add(e.senderId.toString());
+            hideUsers.add(e.receiverId.toString());
+        });
+
+        const feedUsers = await User.find({
+            $and : [
+                { _id : { $ne : loggedUser } },
+                { _id : { $nin : Array.from(hideUsers) } }
+            ]
+        })
+        .select(userFields);
+
+        res.status(200).json({
+            feedUsers
+        });
+
+    } catch (err) {
+        res.status(400).json({
             msg : err.message
         });
     }
