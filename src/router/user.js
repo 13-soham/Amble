@@ -93,6 +93,13 @@ userRouter.get("/user/connections", handleAuth, async (req, res)=>{
 // feed API
 userRouter.get("/user/feed", handleAuth, async(req, res)=>{
     try {
+
+        const page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 7;
+        limit = limit > 30 ? 30 : limit;
+
+        const skip = (page-1) * limit;
+
         const loggedUser = req.user._id;
         const allUser = await ConnectionReq.find({
             $or : [
@@ -116,9 +123,13 @@ userRouter.get("/user/feed", handleAuth, async(req, res)=>{
                 { _id : { $nin : Array.from(hideUsers) } }
             ]
         })
-        .select(userFields);
+        .select(userFields)
+        .skip(skip)
+        .limit(limit);
 
         res.status(200).json({
+            page,
+            limit,
             feedUsers
         });
 
