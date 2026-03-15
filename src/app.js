@@ -7,6 +7,7 @@ const express = require("express");
 const { connectDB } = require("./config/database");
 // const { User } = require("./model/user");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 const app = express();
 const port = 8000;
 
@@ -16,6 +17,10 @@ const requestRouter = require("./router/request");
 const userRouter = require("./router/user");
 
 
+app.use(cors({
+    origin : "http://localhost:5173",
+    credentials : true
+}));
 // app.use("/:userId", handleAuth);
 app.use(express.json());    // middleware to parse the json data to js object
 app.use(cookieParser());   // parse the JWT

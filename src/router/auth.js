@@ -52,13 +52,18 @@ authRouter.post("/login", async (req, res) => {
 
             // create a JWT Token
             const token = await user.getJWT();
-            
+
             // add this token to the cookie and send response back to the server
             res.cookie("token", token, {
-                expires : new Date(Date.now() + 5 * 3600000)  // 5 hr.
+                httpOnly: true,           // secure: not accessible via JS
+                secure: false,            // only true if using HTTPS
+                sameSite: "lax",          // cross-port on localhost
+                expires: new Date(Date.now() + 5 * 3600000)
             });
 
-            res.json({ message: "Login Successful" });
+            res.json(
+                { message: "Login Successful" }
+            );
         }
         else {
             throw new Error("Invalid Email or Password");
@@ -73,7 +78,7 @@ authRouter.post("/login", async (req, res) => {
 
 
 // logout
-authRouter.post("/logout", async(req, res)=>{
+authRouter.post("/logout", async (req, res) => {
     res.clearCookie("token");
     res.send("logout succesfully");
 });
