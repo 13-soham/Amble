@@ -48,7 +48,7 @@ const userSchema = mongoose.Schema({
     about: {
         type: String,
         default: "hey! I am using Amble",
-        maxLength: 100
+        maxLength: 200
     },
     interest: {
         type: [String]

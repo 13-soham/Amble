@@ -11,6 +11,11 @@ const cors = require("cors");
 const app = express();
 const port = 8000;
 
+
+// It reads .env file and loads all the variables into process.env so code can access them.
+const dotenv = require("dotenv");
+dotenv.config({ path : "./src/.env" });
+
 const authRouter = require("./router/auth");
 const profileRouter = require("./router/profile");
 const requestRouter = require("./router/request");

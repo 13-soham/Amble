@@ -8,7 +8,9 @@ const handleAuth = async (req, res, next) => {
 
         // validate the token
         if (!token) {
-            throw new Error("please login first");
+            return res.status(401).json({
+                message : "user not authorize"
+            });
         }
         const decodeData = JWT.verify(token, "Secrect@123");
         const { id } = decodeData;

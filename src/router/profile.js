@@ -5,12 +5,14 @@ const { handleAuth } = require("../middlewares/auth");
 const { validateUpdate } = require("../helper/validation");
 const bcrypt = require("bcrypt");
 
+const upload = require("../middlewares/upload");
+
 // get profile
 profileRouter.get("/profile/view", handleAuth, async (req, res) => {
     try {
         const user = req.user;
         res.json({
-            message: user
+            user: user
         });
 
     } catch (err) {
@@ -45,8 +47,26 @@ profileRouter.patch("/profile/edit", handleAuth, async (req, res) => {
 
     } catch (err) {
         res.status(400).json({
-            msg: err.message
+            message: err.message
         })
+    }
+});
+
+
+// upload photo
+profileRouter.post("/profile/uploadPhoto", handleAuth, upload.single("photo"), async (req, res)=>{
+    try {
+        if(!req.file) return res.status(400).json({ message : "no file uploaded" });
+        const photoUrl = req.file.path; // here Cloudinary returns the full url
+
+        res.status(201).json({
+            photoUrl
+        });
+        
+    } catch (err) {
+        res.status(400).json({
+            message : err.message
+        });
     }
 });
 
@@ -76,7 +96,7 @@ profileRouter.patch("/profile/password", handleAuth, async (req, res) => {
         });
     } catch (err) {
         res.status(400).json({
-            msg: err.message
+            message: err.message
         })
     }
 
@@ -102,7 +122,7 @@ profileRouter.delete("/profile/delete", handleAuth, async (req, res) => {
 
     } catch (err) {
         res.status(400).json({
-            msg: err.message
+            message: err.message
         })
     }
 });
