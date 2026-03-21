@@ -3,11 +3,12 @@ const authRouter = express.Router();
 
 const { User } = require("../model/user");
 const { validateSignup } = require("../helper/validation");
+const upload = require("../middlewares/upload");
 const bcrypt = require("bcrypt");
 
 
 // signup user
-authRouter.post("/signup", async (req, res) => {
+authRouter.post("/signup", upload.single("photo"), async (req, res) => {
     const { firstName, lastName, age, email, password, gender, interest, about, photoUrl } = req.body;
     try {
         // validation of data
@@ -16,9 +17,12 @@ authRouter.post("/signup", async (req, res) => {
         // encrypt the password
         const hashPassword = await bcrypt.hash(password, 10);
 
+        // if photo uploaded use cloudinary url, else let schema default handle it
+        const photoUrl = req.file ? req.file.path : undefined;
+
         // creating the new instance of user Model
         const newUser = await User.create({
-            firstName, lastName, age, email, gender, interest, about, photoUrl,
+            firstName, lastName, age, email, gender, interest, about,
             password: hashPassword
         });
 
