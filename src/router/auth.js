@@ -22,7 +22,7 @@ authRouter.post("/signup", upload.single("photo"), async (req, res) => {
 
         // creating the new instance of user Model
         const newUser = await User.create({
-            firstName, lastName, age, email, gender, interest, about,
+            firstName, lastName, age, email, gender, interest, about, photoUrl,
             password: hashPassword
         });
 
