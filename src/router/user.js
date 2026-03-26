@@ -21,7 +21,9 @@ userRouter.get("/user/request/received", handleAuth, async (req, res)=>{
             status : "interested"
         }).populate("senderId", userFields);
 
-        if(pendingReq.length === 0){
+        const filteredReq = pendingReq.filter((e) => e.senderId !== null); 
+
+        if(filteredReq.length === 0){
             return res.status(200).json({
                 message : "No request received"
             });
@@ -29,7 +31,7 @@ userRouter.get("/user/request/received", handleAuth, async (req, res)=>{
 
         res.status(200).json({
             message : "Your Request",
-            pendingReq
+            filteredReq
         });
         
     } catch (err) {

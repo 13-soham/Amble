@@ -26,7 +26,7 @@ const handleAuth = async (req, res, next) => {
         next();
         
     } catch (err) {
-        res.status(404).json({
+        res.status(401).json({
             message: err.message
         })
     }
