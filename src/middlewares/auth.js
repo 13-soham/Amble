@@ -12,7 +12,7 @@ const handleAuth = async (req, res, next) => {
                 message : "user not authorize"
             });
         }
-        const decodeData = JWT.verify(token, "Secrect@123");
+        const decodeData = JWT.verify(token, process.env.JWT_SECRECT);
         const { id } = decodeData;
 
         // find the user

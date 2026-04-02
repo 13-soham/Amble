@@ -79,7 +79,7 @@ const userSchema = mongoose.Schema({
 // do not use arrow function here, cuz this won't work in arrow function
 userSchema.methods.getJWT = async function () {
     const user = this;
-    const token = await JWT.sign({ id: user._id }, "Secrect@123", {
+    const token = await JWT.sign({ id: user._id }, process.env.JWT_SECRECT, {
         expiresIn: "7d"
     });
 
