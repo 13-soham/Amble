@@ -60,8 +60,8 @@ authRouter.post("/login", async (req, res) => {
             // add this token to the cookie and send response back to the server
             res.cookie("token", token, {
                 httpOnly: true,           // secure: not accessible via JS
-                secure: false,            // only true if using HTTPS
-                sameSite: "lax",          // cross-port on localhost
+                secure: true,            // MUST be true for HTTPS
+                sameSite: "None",          // MUST be None for cross-origin
                 expires: new Date(Date.now() + 5 * 3600000)
             });
 
