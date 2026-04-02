@@ -9,7 +9,7 @@ const { connectDB } = require("./config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const app = express();
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 
 // It reads .env file and loads all the variables into process.env so code can access them.
