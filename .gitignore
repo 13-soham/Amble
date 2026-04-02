@@ -2,4 +2,3 @@ node_modules
 .env
 progress.md
 trash.js
-database.js
